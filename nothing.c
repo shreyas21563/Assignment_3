@@ -29,7 +29,7 @@ int main() {
 	char buffer[10][6];
 	for(int j = 0; j<10; j+=2){
 		for(int k = 0; k<6; k++){
-			buffer[j][k] = strings[i+j][k];
+			buffer[j][k] = strings[i+j/2][k];
 		}
 		sprintf(buffer[j+1], "%d", i+j/2);
 		//itoa(i+j, buffer[j+1], 10);
