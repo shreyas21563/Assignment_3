@@ -15,47 +15,43 @@ void generateStrings(){
 		for(int j = 0; j<5; j++){
 			strings[i][j] = a[rand()%strlen(a)];
 		}
-		//strings[i][5] = i+1;
 		strings[i][5] = '\0';
-		//printf("%s\n", strings[i]);
 	}
 }
 int main() {
     generateStrings();
+    struct timespec t1, t2;
     char fn[]="temp.fifo";
     int wfd;
-    //mkfifo(fn, 0666);
-    for(int i = 0; i<50; i+=5){
+    int i = 0;
+    clock_gettime(CLOCK_REALTIME, &t1);
+    while(i<50){
 	char buffer[10][6];
 	for(int j = 0; j<10; j+=2){
 		for(int k = 0; k<6; k++){
 			buffer[j][k] = strings[i+j/2][k];
 		}
 		sprintf(buffer[j+1], "%d", i+j/2);
-		//itoa(i+j, buffer[j+1], 10);
 	}
 	mkfifo(fn, 0666);
     	int pid = fork();
     	if(pid==0){
     		execv("./moth", NULL);
    	 }else{
-  	//printf("Parent\n");
 		wfd= open(fn, O_WRONLY);
 		write(wfd, buffer, 10*6);
-	//	write(wfd, strings[i], strlen(strings[i])+1);
-		//write(wfd, strings[1], strlen(strings[0])+1);
-		//printf("String 1\n");
-		//write(wfd, strings[0], strlen(strings[1])+1);
-		//printf("String 2\n");
 		close(wfd);
-		wait(NULL);
-		//printf("%s\n", buffer[9]);
-		//printf("%d %d %d %d %d\n", i, i+1, i+2, i+3, i+4);
-		unlink(fn);
+		char next[6];
+		wfd = open(fn, O_RDONLY);
+		read(wfd, next, sizeof(next));
+		close(wfd);
+		int n = atoi(next);
+		i = n+1;
+	//	unlink(fn);
     	}
    }
-    printf("%s\n", strings[48]);
-    printf("%s\n", strings[49]);
-	//unlink(fn);
+    clock_gettime(CLOCK_REALTIME, &t2);
+    printf("TIME FIFO: %f\n", (double)((t2.tv_sec-t1.tv_sec)+((double)(t2.tv_nsec))/(double)1000000000L));
+    unlink(fn);
   return 0;
 }
