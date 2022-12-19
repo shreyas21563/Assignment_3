@@ -54,7 +54,7 @@ int main(){
 			int new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
 			send(new_socket, buffer[0], 60, 0);
 			char moth[6];
-			wait(NULL);
+			//wait(NULL);
 			read(new_socket, moth, 6);
 			i = atoi(moth)+1;
 		//	printf("%s\n", moth);
